@@ -1,0 +1,53 @@
+# https://hyperskill.org/projects/374/stages/2231/implement
+# https://docs.docker.com/compose/gettingstarted/
+# https://hub.docker.com/_/mongo
+# https://docs.docker.com/reference/compose-file/version-and-name/
+# Defining environment variables in docker compose files:
+# https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/#use-the-environment-attribute
+
+# docker compose up --help
+# docker compose --env-file .env up 
+# docker compose --env-file .env --project-name hyper-mongo up 
+# docker compose --env-file .env --project-name hyper-mongo up -d
+# to stop and remove the container: docker compose down
+# to only stop the container: docker compose stop
+# if container already exists you can start it with: docker compose start
+# http://localhost:27027/
+
+# define services in a Compose file
+# "It looks like you are trying to access MongoDB over HTTP on the native driver port."
+
+version: '3.1'
+name: hyper-mongo   # this is the name of the container made from docker compose up
+
+services:
+  mongodb:
+    
+    image: mongo:6.0.8
+    container_name: hyper-mongo
+    ports:
+      - "27027:27017"
+    env_file: ['.env']
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+
+
+# Running:
+# docker compose --env-file .env --project-name hyper-mongo up  
+# - creates a container called 'hyper-mongo' 
+
+# Artifacts
+#  Builds (0): NONE
+#  Images (1): mongo - fb5fba25b25a267c90549346e49e6d76211eae5bf4ac6943c49eac4d30862232
+#        (name=mongo, tag=6.0.8, size=653.66 MB)
+#  Volumes (2): 
+#     1. 5005ecef354b086eb65905c0eff3fac54535aea82f3241fb5d178a9634c86f3e
+#          many folders and files
+#     2. 5005ecef354b086eb65905c0eff3fac54535aea82f3241fb5d178a9634c86f3e
+#          initially empty
+#         
+#  Containers (1): 1. hyper-container
+
+
+

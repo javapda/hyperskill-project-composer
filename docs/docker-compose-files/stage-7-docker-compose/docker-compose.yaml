@@ -1,0 +1,76 @@
+# https://hyperskill.org/projects/374/stages/2234/implement Sideline
+# https://docs.docker.com/compose/gettingstarted/
+# https://hub.docker.com/_/mongo
+# https://docs.docker.com/reference/compose-file/version-and-name/
+# Defining environment variables in docker compose files:
+# https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/#use-the-environment-attribute
+# https://docs.docker.com/compose/intro/compose-application-model/#illustrative-example
+
+# docker compose up --help                                                                                        
+# docker compose --env-file .env up 
+# docker compose --env-file .env --project-name hyper-mongo up 
+# docker compose --env-file .env --project-name hyper-mongo up -d
+# to stop and remove the container: docker compose down
+# to only stop the container: docker compose stop
+# if container already exists you can start it with: docker compose start
+# http://localhost:27027/
+
+# define services in a Compose file
+# "It looks like you are trying to access MongoDB over HTTP on the native driver port."
+
+version: '3.1'
+name: hyper-mongo   # this is the name of the container made from docker compose up
+
+services:
+  # application container
+  task-manager-app:
+    # Define the container name with the hyper-task-manager value;
+    # Application container - rename it to task-manager-app;
+    container_name: task-manager-app
+    # Map the host port 8000 to the container port 8000;
+    ports:
+      - "8000:8000"
+
+    # command to build the image for your service
+    build:
+      context: .
+      # not strictly necessary, but it allows you to have custom named Dockerfile
+      dockerfile: Dockerfile
+    # Define the env_file option for the .env file.
+    env_file: ['.env']
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_HOST_NAME: mongodb
+#      MONGO_PORT_NUMBER: 27017
+      MONGO_PORT_NUBMER: 27017
+    networks:
+      - task-manager-network
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:6.0.8
+    # Database container - rename it to task-manager-db
+    # container_name: hyper-mongo
+    container_name: task-manager-db
+    ports:
+      - "27027:27017"
+    env_file: ['.env']
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - task-manager-data:/data/db
+    networks:
+      - task-manager-network
+
+volumes:
+  # Volume - give it the task-manager-data name;
+  # mongo-data:
+  task-manager-data:
+networks:
+  # Network - give it the task-manager-network name;
+  # hyper-task-manager-network:
+  task-manager-network:
+

@@ -1,0 +1,48 @@
+version: '3.1'
+name: hyper-mongo   # this is the name of the container made from docker compose up
+
+services:
+  hyper-service:
+    # Define the container name with the hyper-task-manager value;
+    container_name: hyper-task-manager
+    # Map the host port 8000 to the container port 8000;
+    ports:
+      - "8000:8000"
+
+    # command to build the image for your service
+    build:
+      context: .
+      # not strictly necessary, but it allows you to have custom named Dockerfile
+      dockerfile: Dockerfile
+    # Define the env_file option for the .env file.
+    env_file: ['.env']
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_HOST_NAME: mongodb
+#      MONGO_PORT_NUMBER: 27017
+      MONGO_PORT_NUBMER: 27017
+    networks:
+      - hyper-task-manager-network
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:6.0.8
+    container_name: hyper-mongo
+    ports:
+      - "27027:27017"
+    env_file: ['.env']
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - hyper-task-manager-network
+
+volumes:
+  mongo-data:
+networks:
+  hyper-task-manager-network:
+

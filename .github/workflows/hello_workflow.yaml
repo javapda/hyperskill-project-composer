@@ -7,5 +7,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Hello world using echo
         run: echo "$(<hello.txt)"
-      - name: Hellow world using cat
+      - name: Hello world using cat
         run: cat hello.txt
+      - name: ls -ltr of hello.txt
+        run: ls -tlr hello.txt
